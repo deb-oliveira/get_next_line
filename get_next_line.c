@@ -6,11 +6,28 @@
 /*   By: dde-oliv <dde-oliv@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/04 07:28:11 by dde-oliv          #+#    #+#             */
-/*   Updated: 2021/06/05 15:59:39 by dde-oliv         ###   ########.fr       */
+/*   Updated: 2021/06/05 20:32:18 by dde-oliv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+
+static int	get_read(int bread, char **buffer, char **saved)
+{
+	if (bread == 0)
+	{
+		free(buffer);
+		if (saved)
+		{
+			free(saved);
+			saved = NULL;
+		}
+		return (0);
+	}
+	else if (bread == -1)
+		return (-1);
+	return (bread);
+}
 
 static int	get_one_line(int bread, char **line, char **buffer, char **saved)
 {
@@ -71,16 +88,8 @@ int	get_next_line(int fd, char **line)
 	{
 		buffer = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
 		bread = read(fd, buffer, BUFFER_SIZE);
-		if (bread == 0)
-		{
-			free(buffer);
-			if (saved)
-			{
-				free(saved);
-				saved = NULL;
-			}
-			return (0);
-		}
+		if (is_finished == get_read(bread, &buffer, &saved) <= 0)
+			return (is_finished);
 		is_finished = get_one_line(bread, line, &buffer, &saved);
 	}
 	return (1);
