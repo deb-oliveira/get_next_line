@@ -6,7 +6,7 @@
 /*   By: dde-oliv <dde-oliv@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/04 07:28:11 by dde-oliv          #+#    #+#             */
-/*   Updated: 2021/06/05 21:03:39 by dde-oliv         ###   ########.fr       */
+/*   Updated: 2021/06/06 11:49:06 by dde-oliv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,11 +87,12 @@ int	get_next_line(int fd, char **line)
 		return (is_finished);
 	while (is_finished == 0)
 	{
-		buffer = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
+		buffer = malloc((BUFFER_SIZE + 1) * sizeof(char));
 		bread = read(fd, buffer, BUFFER_SIZE);
 		is_finished = get_read(bread, &buffer, &saved, line);
 		if (is_finished <= 0)
 			return (is_finished);
+		buffer[bread] = '\0';
 		is_finished = get_one_line(bread, line, &buffer, &saved);
 	}
 	return (1);
