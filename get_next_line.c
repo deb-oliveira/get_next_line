@@ -6,7 +6,7 @@
 /*   By: dde-oliv <dde-oliv@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/04 07:28:11 by dde-oliv          #+#    #+#             */
-/*   Updated: 2021/06/06 11:49:06 by dde-oliv         ###   ########.fr       */
+/*   Updated: 2021/06/06 12:47:27 by dde-oliv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,7 @@ static int	get_saved(char **line, char **saved)
 	*line = ft_calloc(1, sizeof(char));
 	if (!*line)
 		return (-1);
+	saved_temp = NULL;
 	while (*saved && **saved != '\0')
 	{
 		is_finished = get_one_line(ft_strlen(*saved), line, saved, &saved_temp);
