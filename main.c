@@ -6,7 +6,7 @@
 /*   By: dde-oliv <dde-oliv@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/05 16:01:00 by dde-oliv          #+#    #+#             */
-/*   Updated: 2021/06/05 16:06:28 by dde-oliv         ###   ########.fr       */
+/*   Updated: 2021/06/06 12:46:35 by dde-oliv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,5 +23,6 @@ int	main(void)
 		printf("%s\n", line);
 		free(line);
 	}
+	free(line);
 	close(fd);
 }
