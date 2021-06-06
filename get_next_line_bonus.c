@@ -6,27 +6,33 @@
 /*   By: dde-oliv <dde-oliv@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/04 07:28:11 by dde-oliv          #+#    #+#             */
-/*   Updated: 2021/06/06 20:26:34 by dde-oliv         ###   ########.fr       */
+/*   Updated: 2021/06/06 20:56:35 by dde-oliv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line_bonus.h"
 
-static int	get_read(int bread, char **buffer, char **saved, char **line)
+static int	get_read(int bread, char **buffer, t_memory **mem, int fd)
 {
+	t_memory	*ptr;
+	t_memory	*ptr_previous;
+
 	if (bread > 0)
 		return (1);
 	free(*buffer);
-	if (*saved)
+	ptr = *mem;
+	ptr_previous = NULL;
+	while (ptr->fd != fd)
 	{
-		free(*saved);
-		*saved = NULL;
+		ptr_previous = ptr;
+		ptr = ptr->next;
 	}
-	if (bread == -1)
-	{
-		free(*line);
-		*line = NULL;
-	}
+	if (ptr_previous)
+		ptr_previous->next = ptr->next;
+	free(ptr->content);
+	ptr->content = NULL;
+	free(ptr);
+	ptr = NULL;
 	return (bread);
 }
 
@@ -76,18 +82,17 @@ static int	get_saved_content(char **line, char **saved)
 	return (0);
 }
 
-static char	**get_memory(int fd)
+static char	**get_memory(int fd, t_memory **mem)
 {
-	static t_memory	*mem;
 	t_memory		*ptr;
 
-	if (!mem)
+	if (!*mem)
 	{
-		mem = ft_calloc(1, sizeof(t_memory));
-		(mem)->fd = fd;
-		return (&(mem)->content);
+		*mem = ft_calloc(1, sizeof(t_memory));
+		(*mem)->fd = fd;
+		return (&(*mem)->content);
 	}
-	ptr = mem;
+	ptr = *mem;
 	while (ptr->next)
 	{
 		if (ptr->fd == fd)
@@ -103,24 +108,29 @@ static char	**get_memory(int fd)
 
 int	get_next_line(int fd, char **line)
 {
+	static t_memory	*mem;
 	char			**saved;
 	char			*buffer;
 	int				bread;
 	int				is_finished;
 
-	saved = get_memory(fd);
+	saved = get_memory(fd, &mem);
 	is_finished = get_saved_content(line, saved);
-	if (is_finished == -1 || is_finished == 1)
-		return (is_finished);
 	while (is_finished == 0)
 	{
 		buffer = malloc((BUFFER_SIZE + 1) * sizeof(char));
 		bread = read(fd, buffer, BUFFER_SIZE);
-		is_finished = get_read(bread, &buffer, saved, line);
-		if (is_finished <= 0)
+		is_finished = get_read(bread, &buffer, &mem, fd);
+		if (is_finished == 0)
 			return (is_finished);
+		else if (is_finished == -1)
+		{
+			free(*line);
+			*line = NULL;
+			return (is_finished);
+		}
 		buffer[bread] = '\0';
 		is_finished = get_one_line(bread, line, &buffer, saved);
 	}
-	return (1);
+	return (is_finished);
 }
