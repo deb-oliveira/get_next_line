@@ -6,7 +6,7 @@
 /*   By: dde-oliv <dde-oliv@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/04 07:28:11 by dde-oliv          #+#    #+#             */
-/*   Updated: 2021/06/06 20:56:35 by dde-oliv         ###   ########.fr       */
+/*   Updated: 2021/06/06 21:06:32 by dde-oliv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,8 @@ static int	get_read(int bread, char **buffer, t_memory **mem, int fd)
 	}
 	if (ptr_previous)
 		ptr_previous->next = ptr->next;
+	else
+		*mem = (*mem)->next;
 	free(ptr->content);
 	ptr->content = NULL;
 	free(ptr);
